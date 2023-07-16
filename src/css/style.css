@@ -43,8 +43,11 @@
   .button-primary {
     @apply flex items-center justify-center bg-slate-200 dark:bg-indigo-500 enabled:dark:hover:bg-indigo-600 enabled:hover:bg-slate-300 rounded-md font-medium px-5 py-2 disabled:opacity-20 disabled:cursor-not-allowed;
   }
-  .plaeholders-wrapper {
-    @apply flex flex-row;
+  .button-secondary {
+    @apply border border-black rounded-md hover:bg-slate-100 dark:border-white dark:hover:bg-zinc-600;
+  }
+  .placeholders-wrapper {
+    @apply flex justify-center flex-row flex-wrap;
   }
   .letter {
     @apply mx-2 text-3xl font-medium;
@@ -57,5 +60,17 @@
   }
   .hangman-img {
     @apply w-32 h-32 sm:w-60 sm:h-60;
+  }
+  .result-header {
+    @apply text-2xl font-bold mt-4;
+  }
+  .result-header.win {
+    @apply text-lime-600;
+  }
+  .result-header.lose {
+    @apply text-red-600;
+  }
+  .result-word {
+    @apply font-medium uppercase;
   }
 }

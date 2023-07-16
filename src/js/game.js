@@ -4,6 +4,7 @@ const gameDiv = document.querySelector('#game');
 const logoH1 = document.querySelector('#logo');
 
 let triesLeft;
+let winCount;
 
 const createPlaceholdersHTML = () => {
   const word = sessionStorage.getItem('word');
@@ -53,10 +54,19 @@ const checkLetter = (letter) => {
 
     const hangmanImg = document.querySelector('#hangman-img');
     hangmanImg.src = `images/hg-${10 - triesLeft}.png`;
+
+    if (triesLeft === 0) {
+      stopGame('lose');
+    }
   } else {
     const wordArray = word.split('');
     wordArray.forEach((currentLetter, index) => {
       if (currentLetter === inputLetter) {
+        winCount += 1;
+        if (winCount === word.length) {
+          stopGame('win');
+          return;
+        }
         document.querySelector(`#letter_${index}`).innerText =
           inputLetter.toUpperCase();
       }
@@ -64,8 +74,31 @@ const checkLetter = (letter) => {
   }
 };
 
+const stopGame = (status) => {
+  document.querySelector('#placeholders').remove();
+  document.querySelector('#tries').remove();
+  document.querySelector('#keyboard').remove();
+  document.querySelector('#quit').remove();
+
+  const word = sessionStorage.getItem('word');
+
+  if (status === 'win') {
+    document.querySelector('#hangman-img').src = 'images/hg-win.png';
+    gameDiv.innerHTML += '<h2 class="result-header win">You won :)</h2>';
+  } else if (status === 'lose') {
+    gameDiv.innerHTML += '<h2 class="result-header lose">You lost :(</h2>';
+  } else if (status === 'quit') {
+    logoH1.classList.remove('logo-sm');
+    document.querySelector('#hangman-img').remove();
+  }
+
+  gameDiv.innerHTML += `<p>The word was: <span class="result-word">${word}</span></p><button id="play-again" class="button-primary px-5 py-2 mt-5">Play again</button>`;
+  document.querySelector('#play-again').onclick = startGame;
+};
+
 export const startGame = () => {
   triesLeft = 10;
+  winCount = 0;
 
   logoH1.classList.add('logo-sm');
   const randomIndex = Math.floor(Math.random() * WORDS.length);
@@ -87,4 +120,13 @@ export const startGame = () => {
   const hangmanImg = createHangmanImg();
   gameDiv.prepend(hangmanImg);
   gameDiv.appendChild(keyboardDiv);
+
+  gameDiv.insertAdjacentHTML(
+    'beforeend',
+    '<button id="quit" class="button-secondary px-2 py-1 mt-4">Quit</button>'
+  );
+  document.querySelector('#quit').onclick = () => {
+    const isSure = confirm('Are you sure you want to quit and lose progress?');
+    isSure ? stopGame('quit') : null;
+  };
 };
